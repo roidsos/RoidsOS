@@ -20,7 +20,7 @@ all:
 		iso -o os.iso
 	limine/limine-deploy os.iso
 
-override CFILES := $(shell find -L src -type f -name 'h0r.net/src/*.c')
+override CFILES := $(shell find -L h0r.net/src -type f -name '*.c')
 format:
 	clang-format -i ${CFILES}
 
