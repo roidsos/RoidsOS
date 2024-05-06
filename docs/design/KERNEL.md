@@ -42,10 +42,17 @@ there are 2 hives:
 - System
 - Software
 
-System is for the main system.
+System is for the main system. It contains the main configuration of the OS, for example user settings etc.
 
-Software is for programs.
+Software is for programs. It contains information about the installed programs, their version, the users that own them, etc.
 
+#### 2.3 Accessing the registery
+
+The registery huves are on hard disk in form of `.reg` files.
+
+Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(Secondary Indexed VFS), where it can be mounted, or traversed
+
+Each key gets turned into a directory, and each entry gets turned into a file
 
 ## 3. Filesystem
 TBA
