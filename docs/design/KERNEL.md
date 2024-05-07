@@ -1,10 +1,18 @@
 # The design of the RoidsOS kernel(h0r.net)
-## 1. Initialization
-Hornet has a built in init system named `wakeup`. Its role is to start up all tasks in RoidsOS. It recognizes `3` types of objects:
-1. `Services` are processes ran in the background, they are like Unix daemons.
-1. `Groups` are sets of `services` that are ran one after another
-1. `Kernel modules` are special executables that get ran in `Kernel` or `Driver` space.</br> `Drivers` are a special type of them. They have special powers like being able to export system functions,callable by any process .   
-### 1.1 The Main Config file
+Note: since typing h0r.net is hard and takes a long time, I will drop the stylization and just type Hornet. 
+## 1. Kernel architecture
+### 1.3 Privilage levels
+1. `Kernel space`: `ring 0` on **x86_64**
+1. `Driver space`: `ring 1-2` on **x86_64**
+1. `User space`: `ring 3` on **x86_64**
+### 1.2 General Architecture
+Hornet is a `hybrid kernel`: that means ***speed sensitive***(`graphics`,`audio`,`etc.`) or ***mandatory***(`interrupt controllers`,`timers`,`etc.`) drivers are handled in `Kernel space`, but all other drivers run in `Driver` or `User space`.
+## 2. Initialization
+Hornet has a built in init system named `wakeup`. Its role is to start up in RoidsOS. It recognizes `3` types of objects:
+1. `Services` are processes ran in the background, they are kinda like Unix daemons.
+1. `Groups` are sets of `services` that are ran one after another.
+1. `Kernel modules` are special executables that get ran in `Kernel` or `Driver` space.</br> `Drivers` are a special type of them. They have special powers like being able to export system functions,callable by any process.
+### 2.1 The Main Config file
 The config file may look like this:
 ```ini
 [system]
@@ -12,11 +20,11 @@ shell="/bin/shashlik"
 reg_syshive="/sys/registery/main.reg"
 startup_group_id="root"
 ```
-and here are the field definitions:
-1. `system.shell`(`string`): The adress of the shell
-1. `system.reg_syshive`(`string`): the SYSTEM hive of the registery
-1. `system.startup_group_id`(`string`): the group that gets called right after `wakeup_init_hw` is done initializing hardware components
-### 1.2 Service Files
+And here are the field definitions:
+1. `system.shell`(`string`): The path to the shell.
+1. `system.reg_syshive`(`string`): The `SYSTEM` hive of the registery.
+1. `system.startup_group_id`(`string`): The group that gets called right after `wakeup_init_hw` is done initializing hardware components.
+### 2.2 Service Files
 They may look like this:
 ```ini
 [service]
@@ -29,14 +37,14 @@ exec="terminal-jukebox --noui ${this.path}"
 root=true # execute as root, needed to acceess Sanyika's desktop
 ```
 And here are the field definitions:
-1. `service.id`(`string`): The identifier of the service 
-1. `service.name`(`string`,***optional***): Human friendly name of the service, useful for viewing with GUI tools 
-1. `service.desc`(`string`,***optional***): Human friendly description of the service, useful for viewing with GUI tools 
-1. `service.group_id`(`string`): The group that the service is in, and gets called with 
-1. `service.exec`(`string`): The executable that gets executed when the service is called, plus the arguments it takes, separated by spaces
-1. `service.root`(`boolean`): Whether to run it as root, or the currently logged in user
-1. **custom fields**(*any type*,***optional***): Service specific information  
-### 1.3 Group files
+1. `service.id`(`string`): The identifier of the service. 
+1. `service.name`(`string`,***optional***): Human friendly name of the service, useful for viewing with GUI tools.
+1. `service.desc`(`string`,***optional***): Human friendly description of the service, useful for viewing with GUI tools. 
+1. `service.group_id`(`string`): The group that the service is in, and gets called with. 
+1. `service.exec`(`string`): The executable that gets executed when the service is called, plus the arguments it takes, separated by spaces.
+1. `service.root`(`boolean`): Whether to run it as root, or the currently logged in user.
+1. **custom fields**(*any type*,***optional***): Service specific information.
+### 2.3 Group files
 They may look like this:
 ```ini
 [group]
@@ -50,36 +58,83 @@ filesys="./filesys.g"
 exec="/bin/logonui"
 ```
 and here are the field definitions:
-1. `group.id`(`string`): the ID of the group
-1. `subgroups.*`(`string`): the path of a sub-group
-1. `post.exec`(`string`,***optional***): the command that gets called after all the subgroups are done running
-## 2. Driver model
+1. `group.id`(`string`): The ID of the group.
+1. `subgroups.*`(`string`): The path of a sub-group.
+1. `post.exec`(`string`,***optional***): The command that gets called after all the subgroups are done running.
+## 3. Driver model
 TBA
-## 3. Registery
-### 3.1 Terminology
-1. `hive`: The biggest unit of registerym it has everything inside it</br>
-1. `key`: It is like a folder</br>
-1. `subkey`: It is like a folder in a folder</br>
+## 4. Registery
+### 4.1 Terminology
+1. `hive`: The biggest unit of registery.
+1. `key`: It is like a folder.
 1. `entry`: A single value.
-### 3.2 Structure
+
+### 4.2 Entry Types
+1. `0x0`: `I8`: 8 bit signed integer.
+1. `0x1`: `I16`: 16 bit signed integer.
+1. `0x2`: `I32`: 32 bit signed integer.
+1. `0x2`: `I64`: 64 bit signed integer.
+1. `0x3`: `U8`: 8 bit unsigned integer.
+1. `0x4`: `U16`: 16 bit unsigned integer.
+1. `0x5`: `U32`: 32 bit unsigned integer.
+1. `0x5`: `U64`: 64 bit unsigned integer.
+1. `0x6`: `BOOL`: A boolean.
+1. `0x7`: `CHAR`: A unicode character, it is 32 bits wide.
+1. `0x8`: `STRING`: A string in the system's preferred encoding.
+1. `0x9`: `FLOAT`: A 32-bit floating point number.
+1. `0xA`: `DOUBLE`: A 64-bit floating point number.
+### 4.3 Structure
 there are 2 hives:
 
-- System
-- Software
+- `SYSTEM`
+- `SOFTWARE`
 
-System is for the main system. It contains the main configuration of the OS, for example user settings etc.
+`SYSTEM` is for the main system. It contains the main configuration of the OS, for example user settings etc.
 
-Software is for programs. It contains information about the installed programs, their version, the users that own them, etc.
+`SOFTWARE` is for programs. It contains information about the installed programs, their version, the users that own them, etc.
 
-#### 3.3 Accessing the registery
+#### A `hive` file header:
+Header:
+```c
+typedef struct {
+    uint64_t magic;   // a magic value meant to verify whether this file is actually a hive file
+    uint32_t num_keys // the number of keys in the file
+    uint8_t checksum; // a checksum that makes all bytes add up to 0x00
+    char name[64];    // the name of the hive
+} hive_header;
+
+```
+After the header comes `num_keys` key fields.
+#### A `key` field
+Header:
+```c
+typedef struct {
+    uint32_t magic;         // magic number(0xB16B00B5)
+    uint32_t num_entries;   // the number of entries
+    uint32_t num_subkeys;   // the number of subkeys
+    char name[64];          // the name of the key
+} key_header;
+```
+After the header comes `num_entries` entry fields, and `num_subkeys` keys after that.
+#### An `entry` field
+Header:
+```c
+typedef struct {
+    uint8_t type;   // The type of the entry.
+    uint8_t length; // The length of the entry not including the header.
+} entry header
+``` 
+After that comes `length` bytes of data.
+
+#### 4.4 Accessing the registery
 
 The registery huves are on hard disk in form of `.reg` files.
 
-Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(Secondary Indexed VFS), where it can be mounted, or traversed
+Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(Secondary Indexed VFS), where it can be mounted, or traversed.
 
 Each key gets turned into a directory, and each entry gets turned into a file
 
-## 4. Filesystem
+## 5. Filesystem
 TBA
-## 5. Processes and threads
+## 6. Processes and threads
 TBA
