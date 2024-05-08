@@ -133,11 +133,16 @@ After that comes `length` bytes of data.
 
 The registery huves are on hard disk in form of `.reg` files.
 
-Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(Secondary Indexed VFS), where it can be mounted, or traversed.
+Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(`Secondary Indexed VFS`), where it can be mounted, or traversed.
 
 Each key gets turned into a directory, and each entry gets turned into a file
 
 ## 5. Filesystem
- 
+Hornet its VFS split in half, one half is the `Primary Mounting VFS`, the other is the `Secondary Indexed VFS`. 
+#### 5.0 Abbriviations
+1. `PMV` : Primary Mounting VFS.
+1. `SIV` : Secondary Indexed VFS.
+###  5.1 The roles of the 2 halves
+The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s role is to handle opening and closing files, abstract FS operations away, and whatever else a VFS has to do.
 ## 6. Processes and threads
 TBA
