@@ -1,7 +1,7 @@
 # The design of the RoidsOS kernel(h0r.net)
 Note: since typing h0r.net is hard and takes a long time, I will drop the stylization and just type Hornet. 
 ## 1. Kernel architecture
-### 1.3 Privilage levels
+### 1.3 Privilege levels
 1. `Kernel space`: `ring 0` on **x86_64**
 1. `Driver space`: `ring 1-2` on **x86_64**
 1. `User space`: `ring 3` on **x86_64**
@@ -9,9 +9,9 @@ Note: since typing h0r.net is hard and takes a long time, I will drop the styliz
 Hornet is a `hybrid kernel`: that means ***speed sensitive***(`graphics`,`audio`,`etc.`) or ***mandatory***(`interrupt controllers`,`timers`,`etc.`) drivers are handled in `Kernel space`, but all other drivers run in `Driver` or `User space`.
 ## 2. Initialization
 Hornet has a built in init system named `wakeup`. Its role is to start up in RoidsOS. It recognizes `3` types of objects:
-1. `Services` are processes ran in the background, they are kinda like Unix daemons.
-1. `Groups` are sets of `services` that are ran one after another.
-1. `Kernel modules` are special executables that get ran in `Kernel` or `Driver` space.</br> `Drivers` are a special type of them. They have special powers like being able to export system functions,callable by any process.
+1. `Services` are processes run in the background, they are like Unix demons.
+1. `Groups` are sets of `services` that are run one after another.
+1. `Kernel modules` are special executables that are run in `Kernel` or `Driver` space.</br> `Drivers` are a special type of them. They have special privileges like being able to export system functions, callable by any process.
 ### 2.1 The Main Config file
 The config file may look like this:
 ```ini
@@ -66,7 +66,7 @@ TBA
 ## 4. Registery
 ### 4.1 Terminology
 1. `hive`: The biggest unit of registery.
-1. `key`: It is like a folder.
+1. `key`: It is like a directory.
 1. `entry`: A single value.
 
 ### 4.2 Entry Types
@@ -80,18 +80,21 @@ TBA
 1. `0x5`: `U64`: 64 bit unsigned integer.
 1. `0x6`: `BOOL`: A boolean.
 1. `0x7`: `CHAR`: A unicode character, it is 32 bits wide.
-1. `0x8`: `STRING`: A string in the system's preferred encoding.
+1. `0x8`: `SZ`: A string in the system's preferred encoding, zero-terminated.
 1. `0x9`: `FLOAT`: A 32-bit floating point number.
 1. `0xA`: `DOUBLE`: A 64-bit floating point number.
 ### 4.3 Structure
-there are 2 hives:
+there are `3` hives:
 
 - `SYSTEM`
-- `SOFTWARE`
+- `USER`
+- `HARDWARE`
 
-`SYSTEM` is for the main system. It contains the main configuration of the OS, for example user settings etc.
+`SYSTEM` is for the main system. It contains the main configuration of the OS.
 
-`SOFTWARE` is for programs. It contains information about the installed programs, their version, the users that own them, etc.
+`USER` is for programs. It contains information about the installed programs, their version, the users that own them, etc.
+
+`HARDWARE` is for hardware configuration.
 
 #### A `hive` file header:
 Header:
@@ -135,6 +138,6 @@ Accessing the registery is done through the `reg_mount` syscall that mounts a hi
 Each key gets turned into a directory, and each entry gets turned into a file
 
 ## 5. Filesystem
-TBA
+ 
 ## 6. Processes and threads
 TBA
