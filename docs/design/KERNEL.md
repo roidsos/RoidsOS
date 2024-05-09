@@ -62,7 +62,14 @@ and here are the field definitions:
 1. `subgroups.*`(`string`): The path of a sub-group.
 1. `post.exec`(`string`,***optional***): The command that gets called after all the subgroups are done running.
 ## 3. Driver model
-TBA
+ummmmmmm
+```c
+typedef struct {
+    char* name;
+    (*init)();
+} header_idk;
+```
+??????
 ## 4. Registery
 ### 4.1 Terminology
 1. `hive`: The biggest unit of registery.
