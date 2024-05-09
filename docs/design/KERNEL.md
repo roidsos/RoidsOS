@@ -6,7 +6,7 @@ Note: since typing h0r.net is hard and takes a long time, I will drop the styliz
 1. `Driver space`: `ring 1-2` on **x86_64**
 1. `User space`: `ring 3` on **x86_64**
 ### 1.2 General Architecture
-Hornet is a `hybrid kernel`: that means ***speed sensitive***(`graphics`,`audio`,`etc.`) or ***mandatory***(`interrupt controllers`,`timers`,`etc.`) drivers are handled in `Kernel space`, but all other drivers run in `Driver` or `User space`.
+Hornet is a `hybrid kernel`
 ## 2. Initialization
 Hornet has a built in init system named `wakeup`. Its role is to start up in RoidsOS. It recognizes `3` types of objects:
 1. `Services` are processes run in the background, they are like Unix demons.
@@ -32,7 +32,7 @@ id="ssound"
 name="Login Sound Player"
 desc="Plays the login sound, thats just it"
 group_id="on_login"
-path="/usr/sanyika/desktop/not_sex_noises.wav"
+path="/usr/sanyika/desktop/not_sex_noises.wav" # this is a custom field that may be used in exec or anywhere really
 exec="terminal-jukebox --noui ${this.path}"
 root=true # execute as root, needed to acceess Sanyika's desktop
 ```
