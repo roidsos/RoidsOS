@@ -46,5 +46,5 @@ debugruefi: all
 	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 clean:
 # JUST DELETES JUNK LIKE OBJECT FILES - fuck capslock
-	make -C h0r.net/src clean
-	rm -rf h0r.net/src/kernel.bin iso
+	make -C h0r.net clean
+	rm -rf h0r.net/kernel.bin iso
