@@ -146,12 +146,12 @@ Hornet its VFS split in half, one half is the `Primary Mounting VFS`, the other 
 The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s role is to handle opening and closing files, abstract FS operations away, and whatever else a VFS has to do.
 
 ### 5.2 syscalls
-1. `sys_open`(RA) : Opens a file.
-1. `sys_close`() : Closes a file.
-1. `sys_read`() : Reads from an **opened** file.
-1. `sys_write`() : Writes to an **opened** file.
-1. `sys_create`() : Creates a file or directory.
-1. `sys_delete`() : Deletes a file or directory.
-1. `sys_modify`() : Modifies a fiel or directory.
+1. `sys_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
+1. `sys_close`: Closes a file.(`RBX`=`file ID`)
+1. `sys_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
+1. `sys_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
+1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
+1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
+1. `sys_modify`: Modifies a fiel or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
 ## 6. Processes and threads
 TBA
