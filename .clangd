@@ -10,4 +10,5 @@ CompileFlags:
        - -Wextra
        - -Werror
        - -DPRINTF_DISABLE_SUPPORT_FLOAT
+       - -DHEAP_ACCESSABLE
     Compiler: gcc

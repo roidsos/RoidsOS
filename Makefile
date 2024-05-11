@@ -1,3 +1,4 @@
+INITRDFILES := $(shell find -L initramfs -type f -name '*')
 all:
 # builds the kernel
 	cp limine/limine.h h0r.net/src/limine.h
@@ -10,6 +11,7 @@ all:
 	cp cfg/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso/
 	cp h0r.net/kernel.elf iso/boot/h0rnet.elf
 	cp assets/kfont.psf iso/boot/
+	tar -c -f iso/boot/initramfs.tar --format v7 initramfs/*
 	mkdir -p iso/EFI/BOOT
 	cp limine/BOOT*.EFI iso/EFI/BOOT/
 	cp cfg/startup.nsh iso/startup.nsh
