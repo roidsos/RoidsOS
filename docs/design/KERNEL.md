@@ -161,4 +161,10 @@ The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s rol
 1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
 1. `sys_modify`: Modifies a fiel or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
 ## 6. Processes and threads
-TBA
+ye ye the h0r.net scheduler currently is a dead simple Round Robin, Ik Ik its bad
+### 6.1 Process states
+there are 4 process states in h0r.net:
+1. `nonexistant`: The process slot is not occupied.
+1. `ready`: The process can be scheduled without problem.  
+1. `blocked`: The process is blocked and shouldn't be scheduled.
+1. `dead`: The process has been killed or exited and must be cleaned up.
