@@ -159,7 +159,7 @@ The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s rol
 1. `sys_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
 1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
 1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
-1. `sys_modify`: Modifies a fiel or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
+1. `sys_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
 ## 6. Processes and threads
 ye ye the h0r.net scheduler currently is a dead simple Round Robin, Ik Ik its bad
 ### 6.1 Process states
