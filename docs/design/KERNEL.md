@@ -132,7 +132,7 @@ Header:
 typedef struct {
     uint8_t type;   // The type of the entry.
     uint8_t length; // The length of the entry not including the header.
-} entry header
+} entry_header
 ``` 
 After that comes `length` bytes of data.
 
