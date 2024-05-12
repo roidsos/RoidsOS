@@ -130,6 +130,7 @@ After the header comes `num_entries` entry fields, and `num_subkeys` keys after 
 Header:
 ```c
 typedef struct {
+    char name[64]; // The name of the entry
     uint8_t type;   // The type of the entry.
     uint8_t length; // The length of the entry not including the header.
 } entry_header;
