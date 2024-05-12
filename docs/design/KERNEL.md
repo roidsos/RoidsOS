@@ -108,7 +108,7 @@ Header:
 ```c
 typedef struct {
     uint64_t magic;   // a magic value meant to verify whether this file is actually a hive file
-    uint32_t num_keys // the number of keys in the file
+    uint32_t num_keys;// the number of keys in the file
     uint8_t checksum; // a checksum that makes all bytes add up to 0x00
     char name[64];    // the name of the hive
 } hive_header;
