@@ -92,6 +92,10 @@ Gaia is the first process that gets started on boot. It is responsible for setti
 
 All other configurations are in the `SYSTEM` hive.
 ### 3.2 Configurations
+Configurations are entries in key `sys_config` in the `SYSTEM` hive:
+1. `boot_id`(`SZ`): the ID of this installation that lets h0r.net distinguish between different installations.
+1. `sys_shell`(`SZ`): path to the shell that is used by the system.
+1. `startup_group`(`SZ`): The ID of the startup group that gets started on boot.
 
 ### 3.3 Startup objects
 #### 3.3.1 Startup groups
