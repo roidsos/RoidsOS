@@ -82,15 +82,15 @@ Accessing the registery is done through the `reg_mount` syscall that mounts a hi
 
 Each key gets turned into a directory, and each entry gets turned into a file
 ## 3. Initialization
-Hornet has a built in init system named `wakeup`. Its role is to start up the `Kernel space` of RoidsOS. It is also responable for loading the following:
+Hornet has a built in init system named `wakeup`. Its role is to start up the `Kernel space` of RoidsOS, find the drive it booted from, and load the `SYSTEM` hive. It is also responable for loading the following:
 1. `Kernel modules`: Special executables that are run in `Kernel` or `Driver` space.
 1. `Drivers` Executables that can export system functions, callable by any process.
-### 3.1 Gaia
-Gaia is the first process that gets started on boot. It is responsible for setting up the registery, and completing all startup tasks. Here are some paths:
+
+#### 3.1 Paths
 1. `SYSTEM` hive: `/sys/reg/system.reg`
 1. `HARDWARE` hive: `/sys/reg/hardware.reg`
-
-All other configurations are in the `SYSTEM` hive.
+### 3.1 Gaia
+Gaia is the first process that gets started on boot. It is responsible completing all startup tasks.
 ### 3.2 Configurations
 Configurations are entries in key `sys_config` in the `SYSTEM` hive:
 1. `boot_id`(`SZ`): the ID of this installation that lets h0r.net distinguish between different installations.
