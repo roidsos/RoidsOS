@@ -117,7 +117,7 @@ Here is what entries in the key do:
 1. **All other entries are treated as custom parameters.**
 
 ## 4. Filesystem
-Hornet its VFS split in half, one half is the `Primary Mounting VFS`, the other is the `Secondary Indexed VFS`. 
+Hornet has its VFS split in half, one half is the `Primary Mounting VFS`, the other is the `Secondary Indexed VFS`. 
 #### 4.0 Abbriviations
 1. `PMV` : Primary Mounting VFS.
 1. `SIV` : Secondary Indexed VFS.
