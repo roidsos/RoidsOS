@@ -1,82 +1,19 @@
 # The design of the RoidsOS kernel(h0r.net)
 Note: since typing h0r.net is hard and takes a long time, I will drop the stylization and just type Hornet. 
 ## 1. Kernel architecture
-### 1.3 Privilege levels
+### 1.1 Privilege levels
 1. `Kernel space`: `ring 0` on **x86_64**
 1. `Driver space`: `ring 1-2` on **x86_64**
 1. `User space`: `ring 3` on **x86_64**
 ### 1.2 General Architecture
-Hornet is a `hybrid kernel`
-## 2. Initialization
-Hornet has a built in init system named `wakeup`. Its role is to start up in RoidsOS. It recognizes `3` types of objects:
-1. `Services` are processes run in the background, they are like Unix demons.
-1. `Groups` are sets of `services` that are run one after another.
-1. `Kernel modules` are special executables that are run in `Kernel` or `Driver` space.</br> `Drivers` are a special type of them. They have special privileges like being able to export system functions, callable by any process.
-### 2.1 The Main Config file
-The config file may look like this:
-```ini
-[system]
-shell="/bin/shashlik"
-reg_syshive="/sys/registery/main.reg"
-startup_group_id="root"
-```
-And here are the field definitions:
-1. `system.shell`(`string`): The path to the shell.
-1. `system.reg_syshive`(`string`): The `SYSTEM` hive of the registery.
-1. `system.startup_group_id`(`string`): The group that gets called right after `wakeup_init_hw` is done initializing hardware components.
-### 2.2 Service Files
-They may look like this:
-```ini
-[service]
-id="ssound"
-name="Login Sound Player"
-desc="Plays the login sound, thats just it"
-group_id="on_login"
-path="/usr/sanyika/desktop/not_sex_noises.wav" # this is a custom field that may be used in exec or anywhere really
-exec="terminal-jukebox --noui ${this.path}"
-root=true # execute as root, needed to acceess Sanyika's desktop
-```
-And here are the field definitions:
-1. `service.id`(`string`): The identifier of the service. 
-1. `service.name`(`string`,***optional***): Human friendly name of the service, useful for viewing with GUI tools.
-1. `service.desc`(`string`,***optional***): Human friendly description of the service, useful for viewing with GUI tools. 
-1. `service.group_id`(`string`): The group that the service is in, and gets called with. 
-1. `service.exec`(`string`): The executable that gets executed when the service is called, plus the arguments it takes, separated by spaces.
-1. `service.root`(`boolean`): Whether to run it as root, or the currently logged in user.
-1. **custom fields**(*any type*,***optional***): Service specific information.
-### 2.3 Group files
-They may look like this:
-```ini
-[group]
-id="root"
-
-[subgroups]
-drivers="./drivers.g"
-filesys="./filesys.g"
-
-[post]
-exec="/bin/logonui"
-```
-and here are the field definitions:
-1. `group.id`(`string`): The ID of the group.
-1. `subgroups.*`(`string`): The path of a sub-group.
-1. `post.exec`(`string`,***optional***): The command that gets called after all the subgroups are done running.
-## 3. Driver model
-ummmmmmm
-```c
-typedef struct {
-    char* name;
-    (*init)();
-} header_idk;
-```
-??????
-## 4. Registery
-### 4.1 Terminology
+Hornet is a `hybrid kernel`.
+## 2. Registery
+### 2.1 Terminology
 1. `hive`: The biggest unit of registery.
 1. `key`: It is like a directory.
 1. `entry`: A single value.
 
-### 4.2 Entry Types
+### 2.2 Entry Types
 1. `0x0`: `I8`: 8 bit signed integer.
 1. `0x1`: `I16`: 16 bit signed integer.
 1. `0x2`: `I32`: 32 bit signed integer.
@@ -90,7 +27,7 @@ typedef struct {
 1. `0x8`: `SZ`: A string in the system's preferred encoding, zero-terminated.
 1. `0x9`: `FLOAT`: A 32-bit floating point number.
 1. `0xA`: `DOUBLE`: A 64-bit floating point number.
-### 4.3 Structure
+### 2.3 Structure
 there are `3` hives:
 
 - `SYSTEM`
@@ -137,23 +74,52 @@ typedef struct {
 ``` 
 After that comes `length` bytes of data.
 
-#### 4.4 Accessing the registery
+#### 3.4 Accessing the registery
 
 The registery huves are on hard disk in form of `.reg` files.
 
 Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(`Secondary Indexed VFS`), where it can be mounted, or traversed.
 
 Each key gets turned into a directory, and each entry gets turned into a file
+## 3. Initialization
+Hornet has a built in init system named `wakeup`. Its role is to start up the `Kernel space` of RoidsOS. It is also responable for loading the following:
+1. `Kernel modules`: Special executables that are run in `Kernel` or `Driver` space.
+1. `Drivers` Executables that can export system functions, callable by any process.
+### 3.1 Gaia
+Gaia is the first process that gets started on boot. It is responsible for setting up the registery, and completing all startup tasks. Here are some paths:
+1. `SYSTEM` hive: `/sys/reg/system.reg`
+1. `HARDWARE` hive: `/sys/reg/hardware.reg`
 
-## 5. Filesystem
+All other configurations are in the `SYSTEM` hive.
+### 3.2 Configurations
+
+### 3.3 Startup objects
+#### 3.3.1 Startup groups
+`Startup group`s are subkeys of key `startup/tasks` in the `SYSTEM` hive.
+
+Here is what entries in the key do:
+1. `id`(`SZ`): The ID of the group.
+1. `post_exec`(`SZ`,***optional***): The command that gets called after all the subgroups are done running.
+
+#### 3.3.2 Startup tasks
+`Startup task`s are subkeys of a `Startup group` in the `SYSTEM` hive.
+
+Here is what entries in the key do:
+1. `id`(`SZ`): The identifier of the service. 
+1. `name`(`SZ`,***optional***): Human friendly name of the service, useful for viewing with GUI tools.
+1. `desc`(`SZ`,***optional***): Human friendly description of the service, useful for viewing with GUI tools. 
+1. `exec`(`SZ`): The command that gets executed when the service is called, plus the arguments it takes, separated by spaces.
+1. `root`(`BOOL`): Whether to run it as root, or the currently logged in user.
+1. **All other entries are treated as custom parameters.**
+
+## 4. Filesystem
 Hornet its VFS split in half, one half is the `Primary Mounting VFS`, the other is the `Secondary Indexed VFS`. 
-#### 5.0 Abbriviations
+#### 4.0 Abbriviations
 1. `PMV` : Primary Mounting VFS.
 1. `SIV` : Secondary Indexed VFS.
-###  5.1 The roles of the 2 halves
+###  4.1 The roles of the 2 halves
 The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s role is to handle opening and closing files, abstract FS operations away, and whatever else a VFS has to do.
-
-### 5.2 syscalls
+### 4.2 syscalls
 1. `sys_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
 1. `sys_close`: Closes a file.(`RBX`=`file ID`)
 1. `sys_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
