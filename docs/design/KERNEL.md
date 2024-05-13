@@ -17,13 +17,13 @@ Hornet is a `hybrid kernel`.
 1. `0x0`: `I8`: 8 bit signed integer.
 1. `0x1`: `I16`: 16 bit signed integer.
 1. `0x2`: `I32`: 32 bit signed integer.
-1. `0x2`: `I64`: 64 bit signed integer.
-1. `0x3`: `U8`: 8 bit unsigned integer.
-1. `0x4`: `U16`: 16 bit unsigned integer.
-1. `0x5`: `U32`: 32 bit unsigned integer.
-1. `0x5`: `U64`: 64 bit unsigned integer.
-1. `0x6`: `BOOL`: A boolean.
-1. `0x7`: `CHAR`: A unicode character, it is 32 bits wide.
+1. `0x3`: `I64`: 64 bit signed integer.
+1. `0x4`: `U8`: 8 bit unsigned integer.
+1. `0x5`: `U16`: 16 bit unsigned integer.
+1. `0x6`: `U32`: 32 bit unsigned integer.
+1. `0x7`: `U64`: 64 bit unsigned integer.
+1. `0x8`: `BOOL`: A boolean.
+1. `0x9`: `CHAR`: A unicode character, it is 32 bits wide.
 1. `0x8`: `SZ`: A string in the system's preferred encoding, zero-terminated.
 1. `0x9`: `FLOAT`: A 32-bit floating point number.
 1. `0xA`: `DOUBLE`: A 64-bit floating point number.
