@@ -24,9 +24,9 @@ Hornet is a `hybrid kernel`.
 1. `0x7`: `U64`: 64 bit unsigned integer.
 1. `0x8`: `BOOL`: A boolean.
 1. `0x9`: `CHAR`: A unicode character, it is 32 bits wide.
-1. `0x8`: `SZ`: A string in the system's preferred encoding, zero-terminated.
-1. `0x9`: `FLOAT`: A 32-bit floating point number.
-1. `0xA`: `DOUBLE`: A 64-bit floating point number.
+1. `0xA`: `SZ`: A string in the system's preferred encoding, zero-terminated.
+1. `0xB`: `FLOAT`: A 32-bit floating point number.
+1. `0xC`: `DOUBLE`: A 64-bit floating point number.
 ### 2.3 Structure
 there are `3` hives:
 
