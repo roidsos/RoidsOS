@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ HOST_CC = "yes" ]; then
+    echo ">>> Building Roids using your host compiler. forced!"
+    make
+fi
+
+if command -v "x86_64-elf-gcc" &> /dev/null; then
+    if ! command -v "x86_64-elf-ld" &> /dev/null; then
+        echo ">>> You have a crosscompiler for x86_64-elf but not binutils. Please install binutils or specify that you want to build using host cc using: HOST_CC=yes; ./build"
+        exit 1
+    fi
+
+    echo ">>> Building Roids using a cross compiler."
+    make CC=x86_64-elf-gcc LD=x86_64-elf-ld
+else
+    echo ">>> Building Roids using your host compiler."
+    make
+fi
