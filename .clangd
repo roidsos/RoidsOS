@@ -1,7 +1,6 @@
 CompileFlags:
     Add:
        - -I/data/code/RoidsOS/h0r.net/limine
-       - -I/data/code/RoidsOS/h0r.net/src/vendor/libkrnl-essentials
        - -I/data/code/RoidsOS/h0r.net/src/vendor/uterus
        - -I/data/code/RoidsOS/h0r.net/src/vendor/lai/include
        - -I/data/code/RoidsOS/h0r.net/src
