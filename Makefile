@@ -1,6 +1,4 @@
 all:
-
-	cp limine/limine.h h0r.net/src/limine.h
 	cd h0r.net && $(MAKE) && cd .. 
 
 	$(MAKE) -C limine
