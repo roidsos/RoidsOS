@@ -135,3 +135,16 @@ there are 4 process states in h0r.net:
 1. `ready`: The process can be scheduled without problem.  
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
+
+## 7.Event system
+In Hornet, events are a way of communicating between processes. They are kinda like UNIX signals.(IDK what unix signals are like)
+### 7.1 Event objects
+Event objects can be created with the `sys_event_create` syscall. The `sys_event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `sys_event_fire` syscall. 
+### 7.2 Subscribers
+A process can subscribe to an event by calling the `sys_event_subscribe` syscall, and unsubscribe by calling `sys_event_unsubscribe`.
+
+`sys_event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
+```c
+void callback(usize id, void* data);
+```
+At the end of the callbach function there must be a `sys_event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
