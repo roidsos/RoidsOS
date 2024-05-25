@@ -1,12 +1,8 @@
 # The design of the RoidsOS kernel(h0r.net)
 Note: since typing h0r.net is hard and takes a long time, I will drop the stylization and just type Hornet. 
 ## 1. Kernel architecture
-### 1.1 Privilege levels
-1. `Kernel space`: `ring 0` on **x86_64**
-1. `Driver space`: `ring 1-2` on **x86_64**
-1. `User space`: `ring 3` on **x86_64**
 ### 1.2 General Architecture
-Hornet is a `hybrid kernel`.
+Hornet is a `hybrid kernel`, allowing for both `Kernel drivers` and `Userspace drivers`.
 ## 2. Registery
 ### 2.1 Terminology
 1. `hive`: The biggest unit of registery.
