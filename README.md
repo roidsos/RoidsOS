@@ -46,15 +46,15 @@ TBA
 
 ### Prerequisites
 
-TBA
+befre you can build RoidsOS, youll need to get the following dependencies `git(ofc),QEMU,gmake,gcc,nasm`
 
 ### Building
-
-TBA
+#### Linux
+you just do `./configure`, and `make -j<numbar of cores you have>`
 
 ## Running
 
-To build and run RoidsOS on QEMU, run `make run` (optionally, append `-j<number of threads>` if you'd like the build to take less time).
+To run RoidsOS on QEMU, run `make run`(note that this will rebuild the OS if changes have been made).
 
 ## Support
 
