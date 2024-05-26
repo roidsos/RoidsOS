@@ -136,11 +136,19 @@ there are 4 process states in h0r.net:
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
 ### 6.2 System calls
+<!--> Exit<-->
 0. `sys_exit`: Kills the process.(`RBX`=`exit code`)
-1. `sys_read`: Reads from a file.(`RBX`=`file Descriptor`, `RCX`=`offset`,`RDX`=`buffer pointer`)
-2. `sys_write`: Writes to a file.(`RBX`=`file Descriptor`, `RCX`=`offset`,`RDX`=`value pointer`)
-3. `sys_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
-4. `sys_yield`: Yields the CPU.
+<!--> FS stuffs<-->
+1. `sys_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
+1. `sys_close`: Closes a file.(`RBX`=`file ID`)
+1. `sys_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
+1. `sys_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
+1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
+1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
+1. `sys_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
+<!--> process stuff<-->
+1. `sys_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
+1. `sys_yield`: Yields the CPU.
 
 TODO: add more
 
