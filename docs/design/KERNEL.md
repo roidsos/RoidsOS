@@ -127,7 +127,7 @@ The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s rol
 1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
 1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
 1. `sys_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
-## 6. Processes and threads
+## 6. Processes and the userspace
 ye ye the h0r.net scheduler currently is a dead simple Round Robin, Ik Ik its bad
 ### 6.1 Process states
 there are 4 process states in h0r.net:
@@ -135,6 +135,14 @@ there are 4 process states in h0r.net:
 1. `ready`: The process can be scheduled without problem.  
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
+### 6.2 System calls
+0. `sys_exit`: Kills the process.(`RBX`=`exit code`)
+1. `sys_read`: Reads from a file.(`RBX`=`file Descriptor`, `RCX`=`offset`,`RDX`=`buffer pointer`)
+2. `sys_write`: Writes to a file.(`RBX`=`file Descriptor`, `RCX`=`offset`,`RDX`=`value pointer`)
+3. `sys_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
+4. `sys_yield`: Yields the CPU.
+
+TODO: add more
 
 ## 7.Event system
 In Hornet, events are a way of communicating between processes. They are kinda like UNIX signals.(IDK what unix signals are like)
