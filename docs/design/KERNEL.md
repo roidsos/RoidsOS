@@ -3,6 +3,7 @@ Note: since typing h0r.net is hard and takes a long time, I will drop the styliz
 ## 1. Kernel architecture
 ### 1.2 General Architecture
 Hornet is a `hybrid kernel`, allowing for both `Kernel drivers` and `Userspace drivers`.
+ <img src="assets/design.png" title="Title" width="100%">
 ## 2. Registery
 ### 2.1 Terminology
 1. `hive`: The biggest unit of registery.
