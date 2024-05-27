@@ -51,6 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-iso/*
+initramfs/bin
+iso
 hornet.log
 os.iso

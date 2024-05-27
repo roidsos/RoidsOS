@@ -6,6 +6,10 @@ all:
 	mkdir -p iso
 	mkdir -p iso/boot
 	mkdir -p iso/EFI/BOOT
+	mkdir -p initramfs/bin
+
+	nasm -f elf64 -o testexec/test.o testexec/test.asm
+	ld -o initramfs/bin/test testexec/test.o
 
 	cp cfg/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso/
 	cp h0r.net/kernel.elf iso/boot/h0rnet.elf
