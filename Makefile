@@ -31,7 +31,7 @@ format:
 	clang-format -i ${CFILES}
 
 run: all
-	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 -audiodev sdl,id=snd0 -machine pcspk-audiodev=snd0
+	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 -audiodev sdl,id=snd0 -machine pcspk-audiodev=snd0 -device piix3-usb-uhci
 runuefi: all
 	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 debug: all
