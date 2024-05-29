@@ -31,17 +31,17 @@ format:
 	clang-format -i ${CFILES}
 
 run: all
-	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 -audiodev sdl,id=snd0 -machine pcspk-audiodev=snd0 -device piix3-usb-uhci
+	qemu-system-x86_64 -drive file="os.iso",index=0,format=raw -m 256M -serial file:hornet.log -machine q35 
 runuefi: all
-	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -drive file="os.iso",index=0,format=raw -m 256M -serial file:hornet.log -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 debug: all
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35
+	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -drive file="os.iso",index=0,format=raw -m 256M -machine q35
 debuguefi: all
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -drive file="os.iso",index=0,format=raw -m 256M -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 debugr: all
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M  -machine q35
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -drive file="os.iso",index=0,format=raw -m 256M  -machine q35
 debugruefi: all
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -drive file="os.iso",index=0,format=raw -m 256M -machine q35 -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 clean:
 # JUST DELETES JUNK LIKE OBJECT FILES - fuck capslock
 	make -C h0r.net clean
