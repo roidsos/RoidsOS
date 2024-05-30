@@ -3,7 +3,8 @@ Note: since typing h0r.net is hard and takes a long time, I will drop the styliz
 ## 1. Kernel architecture
 ### 1.2 General Architecture
 Hornet is a `hybrid kernel`, allowing for both `Kernel drivers` and `Userspace drivers`.
- <img src="assets/design.png" title="Title" width="100%">
+<img src="assets/design.png" title="Title" width="100%">
+
 ## 2. Registery
 ### 2.1 Terminology
 1. `hive`: The biggest unit of registery.
@@ -20,10 +21,11 @@ Hornet is a `hybrid kernel`, allowing for both `Kernel drivers` and `Userspace d
 1. `0x6`: `U32`: 32 bit unsigned integer.
 1. `0x7`: `U64`: 64 bit unsigned integer.
 1. `0x8`: `BOOL`: A boolean.
-1. `0x9`: `CHAR`: A unicode character, it is 32 bits wide.
-1. `0xA`: `SZ`: A string in the system's preferred encoding, zero-terminated.
-1. `0xB`: `FLOAT`: A 32-bit floating point number.
-1. `0xC`: `DOUBLE`: A 64-bit floating point number.
+1. `0x9`: `CHAR`: A utf-8 character, it is 8 bits wide.
+1. `0xA`: `WCHAR`: A utf-16 character, it is 16 bits wide.
+1. `0xB`: `SZ`: A string in the system's preferred encoding, zero-terminated.
+1. `0xC`: `FLOAT`: A 32-bit floating point number.
+1. `0xD`: `DOUBLE`: A 64-bit floating point number.
 ### 2.3 Structure
 there are `3` hives:
 
@@ -73,13 +75,13 @@ After that comes `length` bytes of data.
 
 #### 3.4 Accessing the registery
 
-The registery huves are on hard disk in form of `.reg` files.
+The registery hives are on hard disk in form of `.reg` files.
 
-Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the SIV(`Secondary Indexed VFS`), where it can be mounted, or traversed.
+Accessing the registery is done through the `reg_mount` syscall that mounts a hive to the VFS, where it can be traversed.
 
-Each key gets turned into a directory, and each entry gets turned into a file
+Each key gets turned into a directory, and each entry gets turned into a file.
 ## 3. Initialization
-Hornet has a built in init system named `wakeup`. Its role is to start up the `Kernel space` of RoidsOS, find the drive it booted from, and load the `SYSTEM` hive. It is also responable for loading the following:
+Hornet has a built in init system named `wakeup`. Its role is to start up the `Kernel space` of RoidsOS, find the drive it booted from, and load the `SYSTEM` and `HARDWARE` hives. It is also responable for loading the following:
 1. `Kernel modules`: Special executables that are run in `Kernel` or `Driver` space.
 1. `Drivers` Executables that can export system functions, callable by any process.
 
@@ -114,50 +116,61 @@ Here is what entries in the key do:
 1. **All other entries are treated as custom parameters.**
 
 ## 4. Filesystem
-Hornet has its VFS split in half, one half is the `Primary Mounting VFS`, the other is the `Secondary Indexed VFS`. 
-#### 4.0 Abbriviations
-1. `PMV` : Primary Mounting VFS.
-1. `SIV` : Secondary Indexed VFS.
-###  4.1 The roles of the 2 halves
-The `PMV`'s role is to convert unix-like paths into `SIV` paths. The `SIV`'s role is to handle opening and closing files, abstract FS operations away, and whatever else a VFS has to do.
-### 4.2 syscalls
-1. `sys_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
-1. `sys_close`: Closes a file.(`RBX`=`file ID`)
-1. `sys_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
-1. `sys_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
-1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
-1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
-1. `sys_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
-## 6. Processes and the userspace
-ye ye the h0r.net scheduler currently is a dead simple Round Robin, Ik Ik its bad
-### 6.1 Process states
-there are 4 process states in h0r.net:
+Hornet has an indexed VFS that abstracts FS operations. There is also a translation layer in the executive layer that transforms the paths to the VFS's syntax from the Sandbox's internal syntax.
+### 4.1 Drives
+TBA.
+### 4.2 VFS syntax
+Here are the rules of Hornet's VFS path syntax:
+1. we use `slashes` to separate directories, **not** backslashes.
+1. there **never** is a leading slash, traditional `"relative paths"` do not exist.
+1. there are **no** trailing slashes allowed.
+1. the `\b` character is used as an escape character.
+1. the `\b?` escape sequence is used to match a single character.
+1. the `\b*` escape sequence is used to match any number of characters.
+1. the `\b^` escape sequence is used to refer to the parent directory.
+1. the `\b.` escape sequence is used to refer to the current directory.
+1. the `\bh` escape sequence is used to refer to the home directory of the current user.
+## 5. Processes and the userspace
+RoidsOS is a multitasking system, Hornet can schedule processes.
+### 5.1 Process states
+there are 4 process states in Hornet:
 1. `nonexistant`: The process slot is not occupied.
 1. `ready`: The process can be scheduled without problem.  
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
-### 6.2 System calls
-<!--> Exit<-->
-0. `sys_exit`: Kills the process.(`RBX`=`exit code`)
-<!--> FS stuffs<-->
-1. `sys_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
-1. `sys_close`: Closes a file.(`RBX`=`file ID`)
-1. `sys_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
-1. `sys_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
-1. `sys_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`)
-1. `sys_delete`: Deletes a file or directory.(`RBX`=`file path`)
-1. `sys_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
-<!--> process stuff<-->
-1. `sys_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
-1. `sys_yield`: Yields the CPU.
+### 5.2 System calls
+the naming convention for system calls is `sys_` followed by the name of the subsystem, then the name of the function.
+
+Here are all Hornet syscalls:
+
+0. `sys_proc_exit`: Exits from the current process.(`RBX`=`exit code`)
+1. `sys_proc_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
+1. `sys_tty_write`: Writes to the console.(`RBX`=`character`)
+1. `sys_tty_read`: Reads from the console.(`return value`=`character`)
+1. `sys_vfs_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
+1. `sys_vfs_close`: Closes a file.(`RBX`=`file ID`)
+1. `sys_vfs_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
+1. `sys_vfs_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
+1. `sys_vfs_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`,`RDX`=`directory?`)
+1. `sys_vfs_delete`: Deletes a file or directory.(`RBX`=`file path`)
+1. `sys_vfs_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
+1. `sys_event_create`: Creates an event.(`return value`=`event ID`)
+1. `sys_event_destroy`: Destroys an event.(`RBX`=`event ID`)
+1. `sys_event_subscribe`: Subscribes to an event.(`RBX`=`event ID`,`RCX`=`callback`)
+1. `sys_event_unsubscribe`: Unsubscribes from an event.(`RBX`=`event ID`)
+1. `sys_event_fire`: Fires an event.(`RBX`=`event ID`,`RCX`=`data`)
+1. `sys_reg_create`: Creates a hive.(`RBX`=`hive name`,`return value`=`hive ID`)
+1. `sys_reg_load`: Loads a hive from disk.(`RBX`=`hive ID`,`RCX`=`path`)
+1. `sys_reg_save`: Saves a hive to disk.(`RBX`=`hive ID`,`RCX`=`path`)
+1. `sys_reg_mount`: Mounts a hive.(`RBX`=`hive ID`,`return value`=`drive ID`)
 
 TODO: add more
 
-## 7.Event system
+## 6.Event system
 In Hornet, events are a way of communicating between processes. They are kinda like UNIX signals.(IDK what unix signals are like)
-### 7.1 Event objects
+### 6.1 Event objects
 Event objects can be created with the `sys_event_create` syscall. The `sys_event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `sys_event_fire` syscall. 
-### 7.2 Subscribers
+### 6.2 Subscribers
 A process can subscribe to an event by calling the `sys_event_subscribe` syscall, and unsubscribe by calling `sys_event_unsubscribe`.
 
 `sys_event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
