@@ -27,7 +27,7 @@
 
 ## About
 
-RoidsOS is a (Work-In-Progress) desktop operating system, meant to be nothing special.
+RoidsOS is a (Work-In-Progress) desktop-focused operating system, meant to be nothing special.
 
 <!-- 
 <details>
@@ -41,9 +41,6 @@ RoidsOS is a (Work-In-Progress) desktop operating system, meant to be nothing sp
 -->
 
 ## Getting Started
-
-TBA
-
 ### Prerequisites
 
 befre you can build RoidsOS, youll need to get the following dependencies `git(ofc),QEMU,gmake,gcc,nasm`
