@@ -4,7 +4,6 @@ CompileFlags:
        - -I/data/code/RoidsOS/h0r.net/src/vendor/uterus
        - -I/data/code/RoidsOS/h0r.net/src/vendor/lai/include
        - -I/data/code/RoidsOS/h0r.net/src
-       - -std=c99
        - -Wall
        - -Wextra
        - -Werror
