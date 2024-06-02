@@ -1,33 +1,7 @@
-
-<div align="center">
-  RoidsOS
-</div>
-<br />
-<div align="center">
-</div>
-
-<details open="open">
-<summary>Table of Contents</summary>
-
-- [About](#about)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Building](#building)
-- [Running](#running)
-- [Support](#support)
-- [Contributing](#contributing)
-- [Authors & contributors](#authors--contributors)
-- [Security](#security)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
-
-</details>
-
----
-
+# RoidsOS: the desktop focused OS
 ## About
 
-RoidsOS is a (Work-In-Progress) desktop operating system, meant to be nothing special.
+RoidsOS is a (Work-In-Progress) desktop-focused operating system, meant to be nothing special.
 
 <!-- 
 <details>
@@ -41,9 +15,6 @@ RoidsOS is a (Work-In-Progress) desktop operating system, meant to be nothing sp
 -->
 
 ## Getting Started
-
-TBA
-
 ### Prerequisites
 
 befre you can build RoidsOS, youll need to get the following dependencies `git(ofc),QEMU,gmake,gcc,nasm`
