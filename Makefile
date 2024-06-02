@@ -25,23 +25,22 @@ all:
 		-efi-boot-part --efi-boot-image --protective-msdos-label \
 		iso -o os.iso
 	limine/limine-deploy os.iso
-
 override CFILES := $(shell find -L h0r.net/src -type f -name '*.c')
 format:
 	clang-format -i ${CFILES}
 
 run: all
-	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 --boot order=d
+	qemu-system-x86_64 -cdrom os.iso -hda hdd.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
 runuefi: all
-	qemu-system-x86_64 -cdrom os.iso -m 256M -serial file:hornet.log -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -cdrom os.iso -hda hdd.img -m 256M -serial file:hornet.log -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 debug: all
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 --boot order=d
+	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d
 debuguefi: all
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 debugr: all
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 --boot order=d
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d
 debugruefi: all
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,unit=0,file="OVMFbin/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMFbin/OVMF_VARS-pure-efi.fd"
 clean:
 # JUST DELETES JUNK LIKE OBJECT FILES - fuck capslock
 	make -C h0r.net clean
