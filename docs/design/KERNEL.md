@@ -2,7 +2,7 @@
 Note: since typing h0r.net is hard and takes a long time, I will drop the stylization and just type Hornet. 
 ## 1. Kernel architecture
 ### 1.2 General Architecture
-Hornet is a `hybrid kernel`, allowing for both `Kernel drivers` and `Userspace drivers`.
+Hornet is a `hybrid kernel`, allowing for drivers to run in `Kernelspace` or in `Userspace`.
 <img src="assets/design.png" title="Title" width="100%">
 
 ## 2. Registery
@@ -178,3 +178,17 @@ A process can subscribe to an event by calling the `sys_event_subscribe` syscall
 void callback(usize id, void* data);
 ```
 At the end of the callbach function there must be a `sys_event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
+
+# 7. Drivers
+There are `3` types of drivers:
+1. **Mandatory drivers**: These are baked into the kernel and a fault usually results in a kernel panic.
+1. **Kernelspace drivers**: These are overhead sensitive drivers(eg. Graphics,Sound,Network) that are less secure than `Userspace drivers`.
+1. **Userspace drivers**: These are overhead insensitive drivers(eg. Storage) that are more secure than `Kernelspace drivers`.
+## 7.1 Mandatory drivers
+Mandatory drivers are baked into the kernel, they are in either `drivers/` or `arch/${ARCH}/drivers/`. they do not use any driver interface and are free to use any function in the kernel. they have a `<name>_init` function that gets called on boot, and must return `true` on success.
+
+## 7.2 Kernelspace drivers
+Kernelspace drivers use UDI.
+
+## 7.3 Userspace drivers
+Userspace drivers use UDI.
