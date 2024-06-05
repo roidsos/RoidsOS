@@ -128,8 +128,6 @@ Here are the rules of Hornet's VFS path syntax:
 1. the `\b?` escape sequence is used to match a single character.
 1. the `\b*` escape sequence is used to match any number of characters.
 1. the `\b^` escape sequence is used to refer to the parent directory.
-1. the `\b.` escape sequence is used to refer to the current directory.
-1. the `\bh` escape sequence is used to refer to the home directory of the current user.
 ## 5. Processes and the userspace
 RoidsOS is a multitasking system, Hornet can schedule processes.
 ### 5.1 Process states
