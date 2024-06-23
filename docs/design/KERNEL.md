@@ -182,13 +182,11 @@ void callback(usize id, void* data);
 ```
 At the end of the callbach function there must be a `event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
 
-# 7. Drivers
-There are `2` types of drivers:
-1. **Kernelspace drivers**: These are overhead sensitive drivers(eg. Graphics,Sound,Network) that are less secure than `Userspace drivers`.
-1. **Userspace drivers**: These are overhead insensitive drivers(eg. Storage) that are more secure than `Kernelspace drivers`.
-
-## 7.2 Kernelspace drivers
-Kernelspace drivers use CDI.
-
-## 7.3 Userspace drivers
-Userspace drivers use CDI.
+# 7. Devices
+In Hornet, devices are a collection of properties and functions.
+### 7.1 The Device struct
+    TBA
+### 7.2 Device classes
+    TBA
+### 7.3 Device functions
+    TBA
