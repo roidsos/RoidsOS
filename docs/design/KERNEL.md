@@ -139,45 +139,45 @@ there are 4 process states in Hornet:
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
 ### 5.2 System calls
-the naming convention for system calls is `sys_` followed by the name of the subsystem, then the name of the function.
+the naming convention for system calls is by the name of the subsystem, then the name of the function.
 
 Here are all Hornet syscalls:
 
-0. `sys_proc_exit`: Exits from the current process.(`RBX`=`exit code`)
-1. `sys_proc_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
-1. `sys_tty_write`: Writes to the console.(`RBX`=`character`)
-1. `sys_tty_read`: Reads from the console.(`return value`=`character`)
-1. `sys_vfs_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
-1. `sys_vfs_close`: Closes a file.(`RBX`=`file ID`)
-1. `sys_vfs_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
-1. `sys_vfs_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
-1. `sys_vfs_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`,`RDX`=`directory?`)
-1. `sys_vfs_delete`: Deletes a file or directory.(`RBX`=`file path`)
-1. `sys_vfs_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
-1. `sys_event_create`: Creates an event.(`return value`=`event ID`)
-1. `sys_event_destroy`: Destroys an event.(`RBX`=`event ID`)
-1. `sys_event_subscribe`: Subscribes to an event.(`RBX`=`event ID`,`RCX`=`callback`)
-1. `sys_event_unsubscribe`: Unsubscribes from an event.(`RBX`=`event ID`)
-1. `sys_event_fire`: Fires an event.(`RBX`=`event ID`,`RCX`=`data`)
-1. `sys_reg_create`: Creates a hive.(`RBX`=`hive name`,`return value`=`hive ID`)
-1. `sys_reg_load`: Loads a hive from disk.(`RBX`=`hive ID`,`RCX`=`path`)
-1. `sys_reg_save`: Saves a hive to disk.(`RBX`=`hive ID`,`RCX`=`path`)
-1. `sys_reg_mount`: Mounts a hive.(`RBX`=`hive ID`,`return value`=`drive ID`)
+0. `proc_exit`: Exits from the current process.(`RBX`=`exit code`)
+1. `proc_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
+1. `tty_write`: Writes to the console.(`RBX`=`character`)
+1. `tty_read`: Reads from the console.(`return value`=`character`)
+1. `vfs_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
+1. `vfs_close`: Closes a file.(`RBX`=`file ID`)
+1. `vfs_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
+1. `vfs_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
+1. `vfs_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`,`RDX`=`directory?`)
+1. `vfs_delete`: Deletes a file or directory.(`RBX`=`file path`)
+1. `vfs_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
+1. `event_create`: Creates an event.(`return value`=`event ID`)
+1. `event_destroy`: Destroys an event.(`RBX`=`event ID`)
+1. `event_subscribe`: Subscribes to an event.(`RBX`=`event ID`,`RCX`=`callback`)
+1. `event_unsubscribe`: Unsubscribes from an event.(`RBX`=`event ID`)
+1. `event_fire`: Fires an event.(`RBX`=`event ID`,`RCX`=`data`)
+1. `reg_create`: Creates a hive.(`RBX`=`hive name`,`return value`=`hive ID`)
+1. `reg_load`: Loads a hive from disk.(`RBX`=`hive ID`,`RCX`=`path`)
+1. `reg_save`: Saves a hive to disk.(`RBX`=`hive ID`,`RCX`=`path`)
+1. `reg_mount`: Mounts a hive.(`RBX`=`hive ID`,`return value`=`drive ID`)
 
 TODO: add more
 
 ## 6.Event system
 In Hornet, events are a way of communicating between processes. They are kinda like UNIX signals.(IDK what unix signals are like)
 ### 6.1 Event objects
-Event objects can be created with the `sys_event_create` syscall. The `sys_event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `sys_event_fire` syscall. 
+Event objects can be created with the `event_create` syscall. The `event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `event_fire` syscall. 
 ### 6.2 Subscribers
-A process can subscribe to an event by calling the `sys_event_subscribe` syscall, and unsubscribe by calling `sys_event_unsubscribe`.
+A process can subscribe to an event by calling the `event_subscribe` syscall, and unsubscribe by calling `event_unsubscribe`.
 
-`sys_event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
+`event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
 ```c
 void callback(usize id, void* data);
 ```
-At the end of the callbach function there must be a `sys_event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
+At the end of the callbach function there must be a `event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
 
 # 7. Drivers
 There are `2` types of drivers:
