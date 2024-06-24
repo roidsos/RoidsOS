@@ -185,7 +185,82 @@ At the end of the callbach function there must be a `event_end` syscall, which t
 # 7. Devices
 In Hornet, devices are a collection of properties and functions.
 ### 7.1 The Device struct
-    TBA
+```c
+typedef struct  {
+    uint8_t class;
+    uint8_t subclass;
+    uint64_t supported_funcs;
+} device_header;
+
+typedef struct {
+    device_header header;
+    void* priv_data;
+    device_haeder* (*identify)(void* priv_data);
+    char (*char_in)(void* priv_data);
+    void (*char_out)(void* priv_data,char w);
+    uint8_t (*block_read)(void* priv_data,uint64_t offset,char* buf,uint64_t size);
+    uint8_t (*block_write)(void* priv_data,uint64_t offset,char* buf,uint64_t size);
+    void (*reserved6)(void* priv_data);
+    void (*reserved7)(void* priv_data);
+    void (*reserved8)(void* priv_data);
+    void (*reserved9)(void* priv_data);
+    void (*reserved10)(void* priv_data);
+    void (*reserved11)(void* priv_data);
+    void (*reserved12)(void* priv_data);
+    void (*reserved13)(void* priv_data);
+    void (*reserved14)(void* priv_data);
+    void (*reserved15)(void* priv_data);
+    void (*reserved16)(void* priv_data);
+    void (*reserved17)(void* priv_data);
+    void (*reserved18)(void* priv_data);
+    void (*reserved19)(void* priv_data);
+    void (*reserved20)(void* priv_data);
+    void (*reserved21)(void* priv_data);
+    void (*reserved22)(void* priv_data);
+    void (*reserved23)(void* priv_data);
+    void (*reserved24)(void* priv_data);
+    void (*reserved25)(void* priv_data);
+    void (*reserved26)(void* priv_data);
+    void (*reserved27)(void* priv_data);
+    void (*reserved28)(void* priv_data);
+    void (*reserved29)(void* priv_data);
+    void (*reserved30)(void* priv_data);
+    void (*reserved31)(void* priv_data);
+    void (*reserved32)(void* priv_data);
+    void (*reserved33)(void* priv_data);
+    void (*reserved34)(void* priv_data);
+    void (*reserved35)(void* priv_data);
+    void (*reserved36)(void* priv_data);
+    void (*reserved37)(void* priv_data);
+    void (*reserved38)(void* priv_data);
+    void (*reserved39)(void* priv_data);
+    void (*reserved40)(void* priv_data);
+    void (*reserved41)(void* priv_data);
+    void (*reserved42)(void* priv_data);
+    void (*reserved43)(void* priv_data);
+    void (*reserved44)(void* priv_data);
+    void (*reserved45)(void* priv_data);
+    void (*reserved46)(void* priv_data);
+    void (*reserved47)(void* priv_data);
+    void (*reserved48)(void* priv_data);
+    void (*reserved49)(void* priv_data);
+    void (*reserved50)(void* priv_data);
+    void (*reserved51)(void* priv_data);
+    void (*reserved52)(void* priv_data);
+    void (*reserved53)(void* priv_data);
+    void (*reserved54)(void* priv_data);
+    void (*reserved55)(void* priv_data);
+    void (*reserved56)(void* priv_data);
+    void (*reserved57)(void* priv_data);
+    void (*reserved58)(void* priv_data);
+    void (*reserved59)(void* priv_data);
+    void (*reserved60)(void* priv_data);
+    void (*reserved61)(void* priv_data);
+    void (*reserved62)(void* priv_data);
+    void (*reserved63)(void* priv_data);
+    void (*reserved64)(void* priv_data);
+} device;
+```
 ### 7.2 Device classes
     TBA
 ### 7.3 Device functions
