@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# RoidsOS-AP
+=======
 # RoidsOS: the desktop focused OS
 ## About
 
@@ -57,3 +60,4 @@ See [LICENSE](LICENSE) for more information.
 ## Acknowledgements
 - [AurixOS's readme](https://github.com/aurixos/os/blob/main/README.md)
 - [The Standard C Library by P. J. Plauger](https://www.amazon.com/Standard-C-Library-P-J-Plauger/dp/0131315099)
+>>>>>>> 93f992ad93285fb84448158e25dfaaf208f99b11
