@@ -136,56 +136,128 @@ there are 4 process states in Hornet:
 1. `blocked`: The process is blocked and shouldn't be scheduled.
 1. `dead`: The process has been killed or exited and must be cleaned up.
 ### 5.2 System calls
-the naming convention for system calls is `sys_` followed by the name of the subsystem, then the name of the function.
+the naming convention for system calls is by the name of the subsystem, then the name of the function.
 
 Here are all Hornet syscalls:
 
-0. `sys_proc_exit`: Exits from the current process.(`RBX`=`exit code`)
-1. `sys_proc_kill`: Kills a process.(`RBX`=`process ID`,`RCX`=`fake exit code`)
-1. `sys_tty_write`: Writes to the console.(`RBX`=`character`)
-1. `sys_tty_read`: Reads from the console.(`return value`=`character`)
-1. `sys_vfs_open`: Opens a file.(`RBX`=`file path`,`RCX`=`pointer to the file ID`)
-1. `sys_vfs_close`: Closes a file.(`RBX`=`file ID`)
-1. `sys_vfs_read`: Reads from an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value pointer`)
-1. `sys_vfs_write`: Writes to an **opened** file.(`RBX`=`file ID`, `RCX`=`offset`,`RDX`=`value`)
-1. `sys_vfs_create`: Creates a file or directory.(`RBX`=`file path`,`RCX`=`recursive?`,`RDX`=`directory?`)
-1. `sys_vfs_delete`: Deletes a file or directory.(`RBX`=`file path`)
-1. `sys_vfs_modify`: Modifies a file or directory.(`RBX`=`file ID`,`RCX`=`field ID`,`RDX`=`value`)
-1. `sys_event_create`: Creates an event.(`return value`=`event ID`)
-1. `sys_event_destroy`: Destroys an event.(`RBX`=`event ID`)
-1. `sys_event_subscribe`: Subscribes to an event.(`RBX`=`event ID`,`RCX`=`callback`)
-1. `sys_event_unsubscribe`: Unsubscribes from an event.(`RBX`=`event ID`)
-1. `sys_event_fire`: Fires an event.(`RBX`=`event ID`,`RCX`=`data`)
-1. `sys_reg_create`: Creates a hive.(`RBX`=`hive name`,`return value`=`hive ID`)
-1. `sys_reg_load`: Loads a hive from disk.(`RBX`=`hive ID`,`RCX`=`path`)
-1. `sys_reg_save`: Saves a hive to disk.(`RBX`=`hive ID`,`RCX`=`path`)
-1. `sys_reg_mount`: Mounts a hive.(`RBX`=`hive ID`,`return value`=`drive ID`)
+0. `proc_exit`:         Kills the current process.     (`A1`=`exit code`                                                    )
+1. `proc_kill`:         Kills a process.               (`A1`=`process ID`,`A2`=`fake exit code`                             )
+1. `tty_write`:         Writes to the console.         (`A1`=`character`                                                    )
+1. `tty_read`:          Reads from the console.        (`RET`=`character`                                                   )
+1. `dev_create`:        Creates a device.              (`RET`=`device ID`,`A2`=`pointer to device struct`                   )
+1. `dev_use`:           Uses a device.                 (`A1`=`func ID`   ,`A2`=`device ids`,`...`=**get passed to function**)
+1. `event_create`:      Creates an event.              (`RET`=`event ID`                                                    )
+1. `event_destroy`:     Destroys an event.             (`A1`=`event ID`                                                     )
+1. `event_subscribe`:   Subscribes to an event.        (`A1`=`event ID`  ,`A2`=`callback`                                   )
+1. `event_unsubscribe`: Unsubscribes from an event.    (`A1`=`event ID`                                                     )
+1. `event_fire`:        Fires an event.                (`A1`=`event ID`  ,`A2`=`data`                                       )
+1. `reg_create`:        Creates a hive.                (`A1`=`hive name` ,`RET`=`hive ID`                                   )
+1. `reg_load`:          Loads a hive from disk.        (`A1`=`hive ID`   ,`A2`=`path`                                       )
+1. `reg_save`:          Saves a hive to disk.          (`A1`=`hive ID`   ,`A2`=`path`                                       )
+1. `reg_mount`:         Mounts a hive.                 (`A1`=`hive ID`   ,`RET`=`drive ID`                                  )
+1. `vfs_open`:          Opens a file.                  (`A1`=`file path` ,`RET`=`file ID`                                   )
+1. `vfs_close`:         Closes a file.                 (`A1`=`file ID`                                                      )
+1. `vfs_read`:          Reads from an **opened** file. (`A1`=`file ID`   ,`A2`=`offset`    ,`A3`=`value pointer`            )
+1. `vfs_write`:         Writes to an **opened** file.  (`A1`=`file ID`   ,`A2`=`offset`    ,`A3`=`value`                    )
+1. `vfs_create`:        Creates a file or directory.   (`A1`=`file path` ,`A2`=`recursive?`,`A3`=`directory?`               )
+1. `vfs_delete`:        Deletes a file or directory.   (`A1`=`file path`                                                    )
+1. `vfs_modify`:        Modifies a file or directory.  (`A1`=`file ID`   ,`A2`=`field ID`  ,`A3`=`value`                    )
+
 
 TODO: add more
 
 ## 6.Event system
 In Hornet, events are a way of communicating between processes. They are kinda like UNIX signals.(IDK what unix signals are like)
 ### 6.1 Event objects
-Event objects can be created with the `sys_event_create` syscall. The `sys_event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `sys_event_fire` syscall. 
+Event objects can be created with the `event_create` syscall. The `event_destroy` syscall is used to destroy them. An event object has a list of subscribers, and their callbacks. An event can be fired with the `event_fire` syscall. 
 ### 6.2 Subscribers
-A process can subscribe to an event by calling the `sys_event_subscribe` syscall, and unsubscribe by calling `sys_event_unsubscribe`.
+A process can subscribe to an event by calling the `event_subscribe` syscall, and unsubscribe by calling `event_unsubscribe`.
 
-`sys_event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
+`event_subscribe` takes 2 arguments: `id` and `callback`. `id` is the ID of the event, and `callback` is the function that gets called when the event is fired.An event callback must take 2 arguments: `id` and `data`. `id` is the ID of the event, and `data` is the data that it recieves.
 ```c
 void callback(usize id, void* data);
 ```
-At the end of the callbach function there must be a `sys_event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
+At the end of the callbach function there must be a `event_end` syscall, which takes `success`(`BOOL`) as an argument. `success` is whether the event was fired successfully.
 
-# 7. Drivers
-There are `3` types of drivers:
-1. **Mandatory drivers**: These are baked into the kernel and a fault usually results in a kernel panic.
-1. **Kernelspace drivers**: These are overhead sensitive drivers(eg. Graphics,Sound,Network) that are less secure than `Userspace drivers`.
-1. **Userspace drivers**: These are overhead insensitive drivers(eg. Storage) that are more secure than `Kernelspace drivers`.
-## 7.1 Mandatory drivers
-Mandatory drivers are baked into the kernel, they are in either `drivers/` or `arch/${ARCH}/drivers/`. they do not use any driver interface and are free to use any function in the kernel. they have a `<name>_init` function that gets called on boot, and must return `true` on success.
-
-## 7.2 Kernelspace drivers
-Kernelspace drivers use UDI.
-
-## 7.3 Userspace drivers
-Userspace drivers use UDI.
+# 7. Devices
+In Hornet, devices are a collection of properties and functions.
+### 7.1 The Device struct
+```c
+typedef struct  {
+    uint8_t class;
+    uint8_t subclass;
+    uint64_t supported_funcs;
+} device_header;
+typedef struct {
+    device_header header;
+    void* priv_data;
+    device_haeder* (*identify)(void* priv_data);
+    char (*char_in)(void* priv_data);
+    void (*char_out)(void* priv_data,char w);
+    uint8_t (*block_read)(void* priv_data,uint64_t offset,char* buf,uint64_t size);
+    uint8_t (*block_write)(void* priv_data,uint64_t offset,char* buf,uint64_t size);
+    void (*reserved6)(void* priv_data);
+    void (*reserved7)(void* priv_data);
+    void (*reserved8)(void* priv_data);
+    void (*reserved9)(void* priv_data);
+    void (*reserved10)(void* priv_data);
+    void (*reserved11)(void* priv_data);
+    void (*reserved12)(void* priv_data);
+    void (*reserved13)(void* priv_data);
+    void (*reserved14)(void* priv_data);
+    void (*reserved15)(void* priv_data);
+    void (*reserved16)(void* priv_data);
+    void (*reserved17)(void* priv_data);
+    void (*reserved18)(void* priv_data);
+    void (*reserved19)(void* priv_data);
+    void (*reserved20)(void* priv_data);
+    void (*reserved21)(void* priv_data);
+    void (*reserved22)(void* priv_data);
+    void (*reserved23)(void* priv_data);
+    void (*reserved24)(void* priv_data);
+    void (*reserved25)(void* priv_data);
+    void (*reserved26)(void* priv_data);
+    void (*reserved27)(void* priv_data);
+    void (*reserved28)(void* priv_data);
+    void (*reserved29)(void* priv_data);
+    void (*reserved30)(void* priv_data);
+    void (*reserved31)(void* priv_data);
+    void (*reserved32)(void* priv_data);
+    void (*reserved33)(void* priv_data);
+    void (*reserved34)(void* priv_data);
+    void (*reserved35)(void* priv_data);
+    void (*reserved36)(void* priv_data);
+    void (*reserved37)(void* priv_data);
+    void (*reserved38)(void* priv_data);
+    void (*reserved39)(void* priv_data);
+    void (*reserved40)(void* priv_data);
+    void (*reserved41)(void* priv_data);
+    void (*reserved42)(void* priv_data);
+    void (*reserved43)(void* priv_data);
+    void (*reserved44)(void* priv_data);
+    void (*reserved45)(void* priv_data);
+    void (*reserved46)(void* priv_data);
+    void (*reserved47)(void* priv_data);
+    void (*reserved48)(void* priv_data);
+    void (*reserved49)(void* priv_data);
+    void (*reserved50)(void* priv_data);
+    void (*reserved51)(void* priv_data);
+    void (*reserved52)(void* priv_data);
+    void (*reserved53)(void* priv_data);
+    void (*reserved54)(void* priv_data);
+    void (*reserved55)(void* priv_data);
+    void (*reserved56)(void* priv_data);
+    void (*reserved57)(void* priv_data);
+    void (*reserved58)(void* priv_data);
+    void (*reserved59)(void* priv_data);
+    void (*reserved60)(void* priv_data);
+    void (*reserved61)(void* priv_data);
+    void (*reserved62)(void* priv_data);
+    void (*reserved63)(void* priv_data);
+    void (*reserved64)(void* priv_data);
+} device;
+```
+### 7.2 Device classes
+    TBA
+### 7.3 Device functions
+    TBA
