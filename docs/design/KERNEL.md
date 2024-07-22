@@ -120,16 +120,13 @@ Hornet has an indexed VFS that abstracts FS operations. There is also a translat
 ### 4.1 Drives
 TBA.
 ### 4.2 VFS syntax
-Here are the rules of Hornet's VFS path syntax:
+Here are the rules of Hornet's **internal** VFS path syntax:
 1. we use `slashes` to separate directories, **not** backslashes.
 1. there **never** is a leading slash, traditional `"relative paths"` do not exist.
 1. there are **no** trailing slashes allowed.
 1. the `\b` character is used as an escape character.
 1. the `\b?` escape sequence is used to match a single character.
 1. the `\b*` escape sequence is used to match any number of characters.
-1. the `\b^` escape sequence is used to refer to the parent directory.
-1. the `\b.` escape sequence is used to refer to the current directory.
-1. the `\bh` escape sequence is used to refer to the home directory of the current user.
 ## 5. Processes and the userspace
 RoidsOS is a multitasking system, Hornet can schedule processes.
 ### 5.1 Process states
@@ -191,7 +188,6 @@ typedef struct  {
     uint8_t subclass;
     uint64_t supported_funcs;
 } device_header;
-
 typedef struct {
     device_header header;
     void* priv_data;
