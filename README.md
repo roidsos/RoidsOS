@@ -21,7 +21,7 @@ befre you can build RoidsOS, youll need to get the following dependencies `git(o
 
 ### Building
 #### Linux
-you just do `./configure`, and `make -j<numbar of cores you have>`
+you just do `./configure`, and `make -j<number of cores you have>`
 
 ## Running
 
