@@ -1,7 +1,6 @@
-[submodule "limine"]
-	path = limine
-	url = https://github.com/limine-bootloader/limine
-	branch = v4.x-branch-binary
 [submodule "Hornet"]
 	path = Hornet
 	url = https://github.com/roidsos/Hornet
+[submodule "hboot"]
+	path = hboot
+	url = https://github.com/roidsos/hboot
