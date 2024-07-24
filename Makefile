@@ -1,39 +1,32 @@
-TARGET ?= x86_64-no_bl
+setup: 
+	mkdir -p iso
+	mkdir -p iso/boot
+	mkdir -p iso/EFI/BOOT
+	mkdir -p initramfs/bin
+depends:
+	$(MAKE) -C Hornet 
+	$(MAKE) -C limine
 
-deps:
-	@if [ ! -d "Hornet/bin" ]; then \
-		git submodule update --init Hornet; \
-	fi
-	@if [ ! -d "hboot/bin" ]; then \
-		git submodule update --init hboot; \
-	fi
-	TARGET=$(TARGET) $(MAKE) -C Hornet all
-ifneq ($(TARGET), x86_64-no_bl)
-	TARGET=$(TARGET) $(MAKE) -C hboot all
-endif
+iso: setup depends
+	cp cfg/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso/
+	cp Hornet/kernel.elf iso/boot/hornet.elf
+	cp limine/BOOT*.EFI iso/EFI/BOOT/
 
-hdd: deps
-	dd if=/dev/zero of=os.img bs=512 count=93750
-	mkfs -t vfat os.img
-	mmd -i os.img ::/EFI
-	mmd -i os.img ::/EFI/BOOT
-ifeq ($(TARGET), x86_64-no_bl) #TODO: check for just the end not the whole string
-	mcopy -i os.img Hornet/bin/hornet.efi ::/EFI/BOOT/BOOTX64.efi
-else
-	mcopy -i os.img hboot/bin/hboot.efi ::/EFI/BOOT/BOOTX64.efi
-endif
+	xorriso -as mkisofs -b limine-cd.bin \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		--efi-boot limine-cd-efi.bin \
+		-efi-boot-part --efi-boot-image --protective-msdos-label \
+		iso -o os.iso
+	limine/limine-deploy os.iso
 
-run: hdd
-	qemu-system-x86_64 -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
-run-uefi: hdd
-	qemu-system-x86_64 -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
-debug: hdd
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
-debug-uefi: hdd
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
-debug-gdb: hdd
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
-debug-gdb-uefi: hdd
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
+	rm -rf iso
+
+
+run: iso
+	qemu-system-x86_64 -cdrom os.iso -hda hdd.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
+debug: iso
+	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d
+debug-gdb: iso
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -cdrom os.iso -hda hdd.img -m 256M -machine q35 --boot order=d
 clean:
 	$(MAKE) -C h0r.net clean
