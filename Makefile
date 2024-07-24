@@ -1,23 +1,27 @@
-setup: 
+deps:
+	@if [ ! -d "Hornet/bin" ]; then \
+		git submodule update --init Hornet; \
+	fi
+	@if [ ! -d "hboot/bin" ]; then \
+		git submodule update --init hboot; \
+	fi
+	$(MAKE) -C Hornet
+	$(MAKE) -C hboot
+
+iso: deps
 	mkdir -p iso
 	mkdir -p iso/boot
 	mkdir -p iso/EFI/BOOT
-	mkdir -p initramfs/bin
-depends:
-	$(MAKE) -C Hornet 
-	$(MAKE) -C limine
 
-iso: setup depends
-	cp cfg/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso/
-	cp Hornet/kernel.elf iso/boot/hornet.elf
-	cp limine/BOOT*.EFI iso/EFI/BOOT/
+	cp limine/limine-cd.bin limine/limine-cd-efi.bin iso/
+#cp Hornet/kernel.elf iso/boot/hornet.elf
+#cp limine/BOOT*.EFI iso/EFI/BOOT/
 
 	xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
 		--efi-boot limine-cd-efi.bin \
 		-efi-boot-part --efi-boot-image --protective-msdos-label \
 		iso -o os.iso
-	limine/limine-deploy os.iso
 
 	rm -rf iso
 

@@ -5,3 +5,6 @@
 [submodule "Hornet"]
 	path = Hornet
 	url = https://github.com/roidsos/Hornet
+[submodule "hboot"]
+	path = hboot
+	url = https://github.com/roidsos/hboot
