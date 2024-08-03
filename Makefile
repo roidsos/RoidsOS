@@ -1,5 +1,6 @@
-TARGET ?= x86_64-no_bl
-
+TARGET ?= x86_64-pc
+CXX = clang++
+ASM = nasm
 deps:
 	@if [ ! -d "Hornet/bin" ]; then \
 		git submodule update --init Hornet; \
@@ -7,21 +8,15 @@ deps:
 	@if [ ! -d "hboot/bin" ]; then \
 		git submodule update --init hboot; \
 	fi
-	TARGET=$(TARGET) $(MAKE) -C Hornet all
-ifneq ($(TARGET), x86_64-no_bl)
-	TARGET=$(TARGET) $(MAKE) -C hboot all
-endif
+	TARGET=$(TARGET) CXX=$(CXX) ASM=$(ASM) $(MAKE) -C Hornet all
+	TARGET=$(TARGET) CXX=$(CXX) ASM=$(ASM) $(MAKE) -C hboot all
 
 hdd: deps
 	dd if=/dev/zero of=os.img bs=512 count=93750
 	mkfs -t vfat os.img
 	mmd -i os.img ::/EFI
 	mmd -i os.img ::/EFI/BOOT
-ifeq ($(TARGET), x86_64-no_bl) #TODO: check for just the end not the whole string
-	mcopy -i os.img Hornet/bin/hornet.efi ::/EFI/BOOT/BOOTX64.efi
-else
 	mcopy -i os.img hboot/bin/hboot.efi ::/EFI/BOOT/BOOTX64.efi
-endif
 
 run: hdd
 	qemu-system-x86_64 -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
