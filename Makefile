@@ -34,4 +34,5 @@ debug-gdb: hdd
 debug-gdb-uefi: hdd
 	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
 clean:
-	$(MAKE) -C h0r.net clean
+	TARGET=$(TARGET) $(MAKE) -C Hornet clean
+	TARGET=$(TARGET) $(MAKE) -C hboot clean
