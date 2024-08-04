@@ -16,7 +16,10 @@ hdd: deps
 	mkfs -t vfat os.img
 	mmd -i os.img ::/EFI
 	mmd -i os.img ::/EFI/BOOT
+	mmd -i os.img ::/boot
 	mcopy -i os.img hboot/bin/hboot.efi ::/EFI/BOOT/BOOTX64.efi
+	mcopy -i os.img Hornet/bin/hornet.elf ::/boot/hornet.elf
+	mcopy -i os.img configs/hboot.conf ::/boot/hboot.conf
 
 run: hdd
 	qemu-system-x86_64 -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
