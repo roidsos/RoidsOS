@@ -2,10 +2,10 @@ TARGET ?= x86_64-pc
 CXX = clang++
 ASM = nasm
 deps:
-	@if [ ! -d "Hornet/bin" ]; then \
+	@if [ ! -f "Hornet/Makefile" ]; then \
 		git submodule update --init Hornet; \
 	fi
-	@if [ ! -d "hboot/bin" ]; then \
+	@if [ ! -f "hboot/Makefile" ]; then \
 		git submodule update --init hboot; \
 	fi
 	TARGET=$(TARGET) CXX=$(CXX) ASM=$(ASM) $(MAKE) -C Hornet all
@@ -18,7 +18,7 @@ hdd: deps
 	mmd -i os.img ::/EFI/BOOT
 	mmd -i os.img ::/boot
 	mcopy -i os.img hboot/bin/hboot.efi ::/EFI/BOOT/BOOTX64.efi
-	mcopy -i os.img Hornet/bin/hornet.elf ::/boot/hornet.elf
+	mcopy -i os.img Hornet/bin/hornet.elf ::/boot/hornet.elf	
 	mcopy -i os.img configs/hboot.conf ::/boot/hboot.conf
 
 run: hdd
