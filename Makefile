@@ -26,13 +26,13 @@ run: hdd
 run-uefi: hdd
 	qemu-system-x86_64 -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
 debug: hdd
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
+	qemu-system-x86_64 -no-reboot -serial stdio -debugcon file:debug.log -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
 debug-uefi: hdd
-	qemu-system-x86_64 -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
+	qemu-system-x86_64 -no-reboot -serial stdio -debugcon file:debug.log -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
 debug-gdb: hdd
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -debugcon file:debug.log -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d
 debug-gdb-uefi: hdd
-	qemu-system-x86_64 -s -S -no-reboot -serial stdio -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
+	qemu-system-x86_64 -s -S -no-reboot -serial stdio -debugcon file:debug.log -d int -no-shutdown -hda os.img -m 256M -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=/usr/share/ovmf/x64/OVMF.fd
 clean:
 	TARGET=$(TARGET) $(MAKE) -C Hornet clean
 	TARGET=$(TARGET) $(MAKE) -C hboot clean
