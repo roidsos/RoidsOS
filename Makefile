@@ -36,3 +36,11 @@ debug-gdb-uefi: hdd
 clean:
 	TARGET=$(TARGET) $(MAKE) -C Hornet clean
 	TARGET=$(TARGET) $(MAKE) -C hboot clean
+
+
+# For WSL because in my case it doesnt work
+
+run-wsl: hdd
+	qemu-system-x86_64.exe -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d
+run-uefi-wsl: hdd
+	qemu-system-x86_64.exe -hda os.img -m 256M -serial file:hornet.log -machine q35 --boot order=d -drive if=pflash,format=raw,readonly=on,file=\\\\wsl.localhost\\Ubuntu\\usr\\share\\ovmf\\x64\\OVMF.fd
