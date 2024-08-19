@@ -7,7 +7,7 @@ read -p "Commit message in hboot repo: " hbootmsg
 read -p "Commit message in RoidsOS: " roidsosmsg
 
 cd hboot/
-git add all
+git add --all
 git stash
 git checkout actually-works
 git stash apply
