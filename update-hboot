@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "RoidsOS Hornet Boot submodule update script"
+
+read -p "Commit message in hboot repo: " hbootmsg
+
+read -p "Commit message in RoidsOS: " roidsosmsg
+
+cd hboot/
+git stash
+git checkout actually-works
+git stash apply
+git commit -a -m "$hbootmsg"
+git push
+cd ..
+git add hboot
+git commit -a -m "$roidsosmsg"
+git push
+echo "Done!"
