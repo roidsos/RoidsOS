@@ -4,9 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/limine",
-                "${workspaceFolder}/src/vendor/libkrnl-essentials",
-                "${workspaceFolder}/src/vendor/uterus"
+                "${workspaceFolder}/hboot/lib"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
